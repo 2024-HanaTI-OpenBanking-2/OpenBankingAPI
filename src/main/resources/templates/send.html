@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Send SMS and Verify</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: inline-block;
+      width: 150px;
+    }
+    .form-group input {
+      width: 200px;
+    }
+    .form-group button {
+      margin-left: 10px;
+    }
+    .disabled {
+      background-color: lightgray;
+      color: gray;
+      pointer-events: none;
+    }
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    $(document).ready(function() {
+      // 모달 제어 함수
+      function showModal(message) {
+        $("#modalMessage").text(message);
+        $("#myModal").show();
+      }
+      $(".close").click(function() {
+        $("#myModal").hide();
+      });
+      $(window).click(function(event) {
+        if (event.target.id == "myModal") {
+          $("#myModal").hide();
+        }
+      });
+
+      $("#sendForm").submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: "/api/oauth/send",
+          data: {
+            phoneNumber: $("#phoneNumber").val(),
+            name: $("#name").val(),
+            birthDate: $("#birthDate").val(),
+            idNumber: $("#idNumber").val()
+          },
+          success: function(response) {
+            $("#sendButton").text("재전송");
+            $("#verifyPhoneNumber").val($("#phoneNumber").val());
+            showModal(response.message);
+          }
+        });
+      });
+
+      $("#verifyForm").submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+          type: "POST",
+          url: "/api/oauth/verify",
+          data: {
+            phoneNumber: $("#verifyPhoneNumber").val(),
+            code: $("#code").val()
+          },
+          success: function(response) {
+            if (response.success) {
+              $("#verifyResponse").text("Verification successful");
+              $("#nextButton").removeClass("disabled");
+              showModal("Verification successful");
+            } else {
+              $("#verifyResponse").text("Verification failed");
+              showModal("Verification failed");
+            }
+          }
+        });
+      });
+
+      $(document).ready(function() {
+        $("#nextButton").click(function() {
+          if (!$(this).hasClass("disabled")) {
+            const params = new URLSearchParams(window.location.search);
+
+            // URL에서 파라미터 읽기
+            const responseType = params.get('response_type');
+            const clientId = params.get('client_id');
+            const redirectUri = params.get('redirect_uri');
+            const scope = params.get('scope');
+            const state = params.get('state');
+
+            $.ajax({
+              type: "GET",
+              url: "/api/oauth/authorize",
+              data: {
+                response_type: responseType,
+                client_id: clientId,
+                redirect_uri: redirectUri,
+                scope: scope,
+                state: state
+              },
+              success: function(response) {
+                console.log("Received response:", response);
+                if (response.success) {
+                  $("#verifyResponse").text("Verification successful");
+                  $("#nextButton").removeClass("disabled");
+                  showModal("Verification successful");
+                } else {
+                  $("#verifyResponse").text("Verification failed");
+                  showModal("Verification failed");
+                }
+              },
+              error: function(error) {
+                // 에러 처리
+                console.log('Error:', error);
+                $("#verifyResponse").text("Error during verification");
+                showModal("Error during verification");
+              }
+            });
+          }
+        });
+      });
+
+    });
+  </script>
+</head>
+<body>
+<div class="form-group">
+  <label for="name">이름</label>
+  <input type="text" id="name" name="name" placeholder="이름을 입력해 주세요." required>
+</div>
+<div class="form-group">
+  <label for="birthDate">생년월일</label>
+  <input type="text" id="birthDate" name="birthDate" placeholder="YYYYMMDD 형식으로 입력해 주세요." required>
+</div>
+<div class="form-group">
+  <label for="idNumber">주민번호 뒷자리</label>
+  <input type="text" id="idNumber" name="idNumber" placeholder="주민번호 뒷자리(7자리)를 입력해 주세요." required>
+</div>
+<div class="form-group">
+  <label for="phoneNumber">휴대폰번호</label>
+  <input type="text" id="phoneNumber" name="phoneNumber" placeholder="'-'없이 숫자만 입력해 주세요." required>
+  <button type="submit" id="sendButton" form="sendForm">인증번호 전송</button>
+</div>
+
+<div class="form-group">
+  <label for="code">인증번호</label>
+  <input type="text" id="code" name="code" placeholder="인증번호를 입력해 주세요." required>
+  <button type="submit" form="verifyForm">인증번호 확인</button>
+</div>
+<p id="verifyResponse" style="display:none;"></p>
+
+<form id="sendForm" style="display: none;"></form>
+<form id="verifyForm" style="display: none;">
+  <input type="hidden" id="verifyPhoneNumber" name="phoneNumber">
+</form>
+
+<div class="form-group">
+  <button id="cancelButton">취소</button>
+  <button id="nextButton" class="disabled">다음</button>
+</div>
+
+<!-- 모달 구조 -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p id="modalMessage"></p>
+  </div>
+</div>
+</body>
+</html>
