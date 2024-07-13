@@ -1,9 +1,7 @@
 package ob.openbank.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +32,10 @@ public class OpenbankingAuthentication {
   @Column(name = "scope", length = 255)
   private String scope;
 
-  @Column(name = "seq_no", length = 255)
-  private String seqNo;
+//  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_no_generator")
+//  @SequenceGenerator(name = "seq_no_generator", sequenceName = "seq_no_seq", allocationSize = 1)
+  @Column(name = "seq_no")
+  private Long seqNo;
 
   @Column(name = "created_at")
   private Timestamp createdAt;

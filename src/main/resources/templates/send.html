@@ -3,6 +3,8 @@
 <head>
   <title>Send SMS and Verify</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+
   <style>
     .form-group {
       margin-bottom: 15px;
@@ -123,6 +125,10 @@
             const redirectUri = params.get('redirect_uri');
             const scope = params.get('scope');
             const state = params.get('state');
+            // input에서 받은 "birthDate-idNumber"형태의 문자열을
+            const combinedString = $("#birthDate").val() + '-' + $("#idNumber").val();
+            // sha512 로직으로 해시처리 해서 변수에 담음 -> CI 생성
+            const CI = CryptoJS.SHA512(combinedString).toString(CryptoJS.enc.Hex);
 
             $.ajax({
               type: "GET",
@@ -132,18 +138,13 @@
                 client_id: clientId,
                 redirect_uri: redirectUri,
                 scope: scope,
-                state: state
+                state: state,
+                // CI 값을 함께 전송
+                ci: CI // CI 값을 함께 전송
               },
               success: function(response) {
-                console.log("Received response:", response);
-                if (response.success) {
-                  $("#verifyResponse").text("Verification successful");
-                  $("#nextButton").removeClass("disabled");
-                  showModal("Verification successful");
-                } else {
-                  $("#verifyResponse").text("Verification failed");
-                  showModal("Verification failed");
-                }
+                console.log("Redirecting to:", response.redirectUrl);
+                window.location.href = response.redirectUrl; // 서버로부터 받은 URL로 리다이렉트
               },
               error: function(error) {
                 // 에러 처리
@@ -166,7 +167,7 @@
 </div>
 <div class="form-group">
   <label for="birthDate">생년월일</label>
-  <input type="text" id="birthDate" name="birthDate" placeholder="YYYYMMDD 형식으로 입력해 주세요." required>
+  <input type="text" id="birthDate" name="birthDate" placeholder="YYMMDD 형식으로 입력해 주세요." required>
 </div>
 <div class="form-group">
   <label for="idNumber">주민번호 뒷자리</label>
