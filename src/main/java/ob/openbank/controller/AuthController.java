@@ -34,9 +34,10 @@ public class AuthController {
             @RequestParam String scope,
             @RequestParam String state,
             @RequestParam String ci,
+            @RequestParam String customer_id,
             HttpServletResponse response) throws IOException {
         try {
-            String redirectUrl = authService.authorize2(response_type, client_id, redirect_uri, scope, state, ci);
+            String redirectUrl = authService.authorize2(response_type, client_id, redirect_uri, scope, state, ci, customer_id);
             response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             e.printStackTrace();

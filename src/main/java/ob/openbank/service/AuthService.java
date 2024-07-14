@@ -107,7 +107,7 @@ public class AuthService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public String authorize2(String responseType, String clientId, String redirectUri, String scope, String state, String ci) throws Exception {
+    public String authorize2(String responseType, String clientId, String redirectUri, String scope, String state, String ci, String customerId) throws Exception {
         try {
             OpenbankingAuthentication auth = authenticationRepository.findById(ci).orElse(new OpenbankingAuthentication());
             String authorizationCode = UUID.randomUUID().toString();
@@ -123,7 +123,7 @@ public class AuthService {
 
             authenticationRepository.save(auth);
 
-            return redirectUri + "?code=" + authorizationCode + "&state=" + state;
+            return redirectUri + "?code=" + authorizationCode + "&state=" + state + "&customer_id=" + customerId;
         } catch (Exception e) {
             throw new Exception("Authorization failed", e);
         }

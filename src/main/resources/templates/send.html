@@ -1,207 +1,269 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Send SMS and Verify</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <title>Send SMS and Verify</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="/css/send.css">
+    <script>
+        $(document).ready(function () {
 
-  <style>
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
-      display: inline-block;
-      width: 150px;
-    }
-    .form-group input {
-      width: 200px;
-    }
-    .form-group button {
-      margin-left: 10px;
-    }
-    .disabled {
-      background-color: lightgray;
-      color: gray;
-      pointer-events: none;
-    }
-    /* 모달 스타일 */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgb(0,0,0);
-      background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-  </style>
-  <script>
-    $(document).ready(function() {
-      // 모달 제어 함수
-      function showModal(message) {
-        $("#modalMessage").text(message);
-        $("#myModal").show();
-      }
-      $(".close").click(function() {
-        $("#myModal").hide();
-      });
-      $(window).click(function(event) {
-        if (event.target.id == "myModal") {
-          $("#myModal").hide();
-        }
-      });
+            // 전화번호와 체크박스 상태에 따라 '인증번호 전송' 버튼 상태를 업데이트하는 함수
+            function updateSendButtonStatus() {
+                var phoneNumber = $("#phoneNumber").val();
+                var allCheckboxes = $('.checkbox-group input[type="checkbox"]');
+                var allChecked = allCheckboxes.length === allCheckboxes.filter(':checked').length;
 
-      $("#sendForm").submit(function(event) {
-        event.preventDefault();
-        $.ajax({
-          type: "POST",
-          url: "/api/oauth/send",
-          data: {
-            phoneNumber: $("#phoneNumber").val(),
-            name: $("#name").val(),
-            birthDate: $("#birthDate").val(),
-            idNumber: $("#idNumber").val()
-          },
-          success: function(response) {
-            $("#sendButton").text("재전송");
-            $("#verifyPhoneNumber").val($("#phoneNumber").val());
-            showModal(response.message);
-          }
-        });
-      });
+                $('#selectAll').prop('checked', allChecked);  // 전체 동의 체크박스 상태 업데이트
 
-      $("#verifyForm").submit(function(event) {
-        event.preventDefault();
-        $.ajax({
-          type: "POST",
-          url: "/api/oauth/verify",
-          data: {
-            phoneNumber: $("#verifyPhoneNumber").val(),
-            code: $("#code").val()
-          },
-          success: function(response) {
-            if (response.success) {
-              $("#verifyResponse").text("Verification successful");
-              $("#nextButton").removeClass("disabled");
-              showModal("Verification successful");
-            } else {
-              $("#verifyResponse").text("Verification failed");
-              showModal("Verification failed");
+                if (phoneNumber.length === 11 && /^\d+$/.test(phoneNumber) && allChecked) {
+                    $("#sendButton").removeClass("disabled").prop('disabled', false);
+                } else {
+                    $("#sendButton").addClass("disabled").prop('disabled', true);
+                }
             }
-          }
-        });
-      });
 
-      $(document).ready(function() {
-        $("#nextButton").click(function() {
-          if (!$(this).hasClass("disabled")) {
-            const params = new URLSearchParams(window.location.search);
-
-            // URL에서 파라미터 읽기
-            const responseType = params.get('response_type');
-            const clientId = params.get('client_id');
-            const redirectUri = params.get('redirect_uri');
-            const scope = params.get('scope');
-            const state = params.get('state');
-            // input에서 받은 "birthDate-idNumber"형태의 문자열을
-            const combinedString = $("#birthDate").val() + '-' + $("#idNumber").val();
-            // sha512 로직으로 해시처리 해서 변수에 담음 -> CI 생성
-            const CI = CryptoJS.SHA512(combinedString).toString(CryptoJS.enc.Hex);
-
-            $.ajax({
-              type: "GET",
-              url: "/api/oauth/authorize",
-              data: {
-                response_type: responseType,
-                client_id: clientId,
-                redirect_uri: redirectUri,
-                scope: scope,
-                state: state,
-                // CI 값을 함께 전송
-                ci: CI // CI 값을 함께 전송
-              },
-              success: function(response) {
-                console.log("Redirecting to:", response.redirectUrl);
-                window.location.href = response.redirectUrl; // 서버로부터 받은 URL로 리다이렉트
-              },
-              error: function(error) {
-                // 에러 처리
-                console.log('Error:', error);
-                $("#verifyResponse").text("Error during verification");
-                showModal("Error during verification");
-              }
+            // 전체 선택 체크박스 기능
+            $('#selectAll').change(function () {
+                $('.checkbox-group input[type="checkbox"]').prop('checked', $(this).is(':checked'));
+                updateSendButtonStatus();
             });
-          }
-        });
-      });
 
-    });
-  </script>
+            // 개별 체크박스가 변경될 때 전체 선택 체크박스 상태와 '인증번호 전송' 버튼 상태 업데이트
+            $('.checkbox-group input[type="checkbox"]').change(function () {
+                updateSendButtonStatus();
+            });
+
+            // 전화번호 입력 필드에서 입력이 감지될 때마다 버튼 상태 업데이트
+            $("#phoneNumber").on("input", function () {
+                updateSendButtonStatus();
+            });
+
+            // '인증번호 전송' 버튼 클릭 이벤트
+            $("#sendButton").click(function (event) {
+                if ($(this).hasClass("disabled")) {
+                    event.preventDefault();  // 비활성화 상태이면 폼 제출 방지
+                } else {
+                    // 버튼이 활성화 상태이면 폼 제출
+                    $("#sendForm").submit();
+                }
+            });
+
+            // 라벨 클릭 시 PDF 모달 표시
+            $(".consent-label").click(function () {
+                // 체크박스의 data-pdf-url 속성에서 PDF URL을 가져옵니다.
+                var pdfUrl = $(this).data("pdf-url");  // 'this'를 '$(this)'로 변경하여 jQuery 객체로 만듭니다.
+                console.log("PDF URL: ", pdfUrl); // URL을 콘솔에 출력하여 확인
+
+                if (pdfUrl) {
+                    var content = `<iframe src="${pdfUrl}" style="width:100%; height:100%;" frameborder="0"></iframe>`;
+                    showPDFModal(content);
+                } else {
+                    alert("PDF 문서가 없습니다."); // URL이 없을 경우 사용자에게 알림
+                }
+            });
+
+            // 전화번호 입력 필드에서 입력이 감지될 때마다 검사
+            $("#phoneNumber").on("input", function () {
+                var phoneNumber = $(this).val();
+                if (phoneNumber.length === 11 && /^\d+$/.test(phoneNumber)) {
+                    $("#sendButton").removeClass("disabled").prop('disabled', false);
+                } else {
+                    $("#sendButton").addClass("disabled").prop('disabled', true);
+                }
+            });
+
+            // 모달 제어 함수
+            function showModal(message) {
+                $("#modalMessage").text(message);
+                $("#myModal").show();
+            }
+
+            function showPDFModal(content) {
+                $("#modalMessage").html(content);
+                $("#myModal").show();
+            }
+
+            $(".close").click(function () {
+                $("#myModal").hide();
+            });
+            $(window).click(function (event) {
+                if (event.target.id == "myModal") {
+                    $("#myModal").hide();
+                }
+            });
+
+
+            // '인증번호 전송' 버튼 클릭 이벤트 핸들러
+            $("#sendButton").click(function (event) {
+                event.preventDefault();  // 기본 폼 제출 이벤트 중단
+                if (!$(this).hasClass("disabled")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/oauth/send",
+                        data: {
+                            phoneNumber: $("#phoneNumber").val(),
+                            name: $("#name").val(),
+                            birthDate: $("#birthDate").val(),
+                            idNumber: $("#idNumber").val()
+                        },
+                        success: function (response) {
+                            $("#sendButton").text("재전송");
+                            $("#verifyPhoneNumber").val($("#phoneNumber").val());
+                            showModal("인증 번호가 전송되었습니다.");
+                        },
+                        error: function (xhr, status, error) {
+                            showModal("인증 번호 전송에 실패하였습니다.");
+                        }
+                    });
+                }
+            });
+
+// 이벤트 핸들러를 폼 제출로부터 분리하여, 버튼 클릭에만 의존하도록 설정
+            $("#sendForm").on("submit", function (event) {
+                event.preventDefault();  // 폼의 기본 제출 이벤트도 중단
+            });
+
+
+            $("#verifyForm").submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/api/oauth/verify",
+                    data: {
+                        phoneNumber: $("#verifyPhoneNumber").val(),
+                        code: $("#code").val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#verifyResponse").text("Verification successful");
+                            $("#nextButton").removeClass("disabled");
+                            showModal("인증 완료");
+                        } else {
+                            $("#verifyResponse").text("Verification failed");
+                            showModal("인증 번호가 올바르지 않습니다.");
+                        }
+                    }
+                });
+            });
+
+            $(document).ready(function () {
+                $("#nextButton").click(function () {
+                    if (!$(this).hasClass("disabled")) {
+                        const params = new URLSearchParams(window.location.search);
+
+                        // URL에서 파라미터 읽기
+                        const responseType = params.get('response_type');
+                        const clientId = params.get('client_id');
+                        const redirectUri = params.get('redirect_uri');
+                        const scope = params.get('scope');
+                        const state = params.get('state');
+                        // input에서 받은 "birthDate-idNumber"형태의 문자열을
+                        const combinedString = $("#birthDate").val() + '-' + $("#idNumber").val();
+                        // sha512 로직으로 해시처리 해서 변수에 담음 -> CI 생성
+                        const CI = CryptoJS.SHA512(combinedString).toString(CryptoJS.enc.Hex);
+                        const customerId = params.get("customer_id");
+
+                        $.ajax({
+                            type: "GET",
+                            url: "/api/oauth/authorize",
+                            data: {
+                                response_type: responseType,
+                                client_id: clientId,
+                                redirect_uri: redirectUri,
+                                scope: scope,
+                                state: state,
+                                // CI 값을 함께 전송
+                                ci: CI, // CI 값을 함께 전송
+                                customer_id: customerId
+                            },
+                            success: function (response) {
+                                console.log("Redirecting to:", response.redirectUrl);
+                                window.location.href = response.redirectUrl; // 서버로부터 받은 URL로 리다이렉트
+                            },
+                            error: function (error) {
+                                // 에러 처리
+                                console.log('Error in /api/oauth/authorize:', error);
+                                $("#verifyResponse").text("Error during verification");
+                                showModal("Error during verification");
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
 </head>
 <body>
-<div class="form-group">
-  <label for="name">이름</label>
-  <input type="text" id="name" name="name" placeholder="이름을 입력해 주세요." required>
-</div>
-<div class="form-group">
-  <label for="birthDate">생년월일</label>
-  <input type="text" id="birthDate" name="birthDate" placeholder="YYMMDD 형식으로 입력해 주세요." required>
-</div>
-<div class="form-group">
-  <label for="idNumber">주민번호 뒷자리</label>
-  <input type="text" id="idNumber" name="idNumber" placeholder="주민번호 뒷자리(7자리)를 입력해 주세요." required>
-</div>
-<div class="form-group">
-  <label for="phoneNumber">휴대폰번호</label>
-  <input type="text" id="phoneNumber" name="phoneNumber" placeholder="'-'없이 숫자만 입력해 주세요." required>
-  <button type="submit" id="sendButton" form="sendForm">인증번호 전송</button>
-</div>
+<div class="container">
 
-<div class="form-group">
-  <label for="code">인증번호</label>
-  <input type="text" id="code" name="code" placeholder="인증번호를 입력해 주세요." required>
-  <button type="submit" form="verifyForm">인증번호 확인</button>
-</div>
-<p id="verifyResponse" style="display:none;"></p>
+    <div class="form-group">
+        <label for="name">이름</label>
+        <input type="text" id="name" name="name" placeholder="이름을 입력해 주세요." class="name-input" required>
+    </div>
+    <div class="form-group">
+        <label for="birthDate">주민등록 번호</label>
+        <div class="input-group">
+            <input type="text" id="birthDate" name="birthDate" placeholder="주민등록번호 앞 6자리" required>
+            <input type="password" id="idNumber" name="idNumber" placeholder="주민등록번호 뒷 7자리" required>
+        </div>
+    </div>
+    <!-- 약관 전체 동의 체크박스 -->
+    <div class="form-group">
+        <div class="checkbox-group full-width">
+            <input type="checkbox" id="selectAll" name="selectAll">
+            <label for="selectAll">약관 전체 동의</label>
+        </div>
+    </div>
 
-<form id="sendForm" style="display: none;"></form>
-<form id="verifyForm" style="display: none;">
-  <input type="hidden" id="verifyPhoneNumber" name="phoneNumber">
-</form>
+    <!-- 개별 동의 체크박스 -->
+    <div class="form-group">
+        <div class="checkbox-group">
+            <input type="checkbox" id="personalInfoConsent" name="personalInfoConsent">
+            <label for="personalInfoConsent" class="consent-label" data-pdf-url="/pdf/user-identification-consent.pdf">개인
+                정보 이용 동의</label>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="ciUseConsent" name="ciUseConsent">
+            <label for="ciUseConsent" class="consent-label"
+                   data-pdf-url="/pdf/user-identification-consent.pdf">연계정보(CI)</label>
+        </div>
+    </div>
 
-<div class="form-group">
-  <button id="cancelButton">취소</button>
-  <button id="nextButton" class="disabled">다음</button>
-</div>
 
-<!-- 모달 구조 -->
-<div id="myModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p id="modalMessage"></p>
-  </div>
+    <div class="form-group">
+        <label for="phoneNumber">휴대폰번호</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="'-'없이 숫자만 입력해 주세요." required>
+        <button type="submit" id="sendButton" form="sendForm" class="disabled">인증번호 전송</button>
+    </div>
+
+    <div class="form-group">
+        <label for="code">인증번호</label>
+        <input type="text" id="code" name="code" placeholder="인증번호를 입력해 주세요." required>
+        <button type="submit" form="verifyForm">인증번호 확인</button>
+    </div>
+    <p id="verifyResponse" style="display:none;"></p>
+
+    <form id="sendForm" style="display: none;"></form>
+    <form id="verifyForm" style="display: none;">
+        <input type="hidden" id="verifyPhoneNumber" name="phoneNumber">
+    </form>
+
+    <div class="form-group">
+        <button id="cancelButton">취소</button>
+        <button id="nextButton" class="disabled">다음</button>
+    </div>
+
+    <!-- 모달 구조 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalMessage" class="modal-message"></p>
+        </div>
+    </div>
 </div>
 </body>
 </html>
