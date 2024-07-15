@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface OpenbankingAuthenticationRepository extends
     JpaRepository<OpenbankingAuthentication, String> {
     Optional<OpenbankingAuthentication> findByAuthorizationCode(String authorizationCode);
-
+    Optional<OpenbankingAuthentication> findByAccessTokenId(String accessTokenId);
     @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
     Long countAllCIs();
 }

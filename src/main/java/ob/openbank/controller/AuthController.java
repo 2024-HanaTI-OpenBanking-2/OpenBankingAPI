@@ -9,7 +9,9 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import ob.openbank.dto.AccessTokenResponseDTO;
 
+import ob.openbank.dto.RequestAuthCodeResponseDTO;
 import ob.openbank.service.AuthService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,6 +79,16 @@ public class AuthController {
         Map<String, Object> result = new HashMap<>();
         result.put("success", success);
         return result;
+    }
+
+    @GetMapping("/request-auth-code")
+    public ResponseEntity<?> requestAuthCode(@RequestParam String access_token) {
+        try {
+            RequestAuthCodeResponseDTO responseDTO = authService.generateAuthCode(access_token);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
 }
