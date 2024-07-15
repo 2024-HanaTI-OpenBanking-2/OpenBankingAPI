@@ -26,7 +26,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/authorize") // 오픈뱅킹을 사용하시겠습니까?
+    @GetMapping("/authorize") // 오픈뱅킹을 사용하시겠습니까??
     public void authorize(
             @RequestParam String response_type,
             @RequestParam String client_id,
