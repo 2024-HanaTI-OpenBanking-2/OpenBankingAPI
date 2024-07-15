@@ -15,6 +15,7 @@ import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import ob.openbank.dto.AccessTokenResponseDTO;
 import ob.openbank.dto.AuthorizeResponseDTO;
+import ob.openbank.dto.RequestAuthCodeResponseDTO;
 import ob.openbank.entity.OpenbankingAuthentication;
 import ob.openbank.entity.OpenbankingAuthorizedClient;
 import ob.openbank.repository.OpenbankingAuthenticationRepository;
@@ -198,4 +199,23 @@ public class AuthService {
         return storedCode != null && storedCode.equals(code);
     }
 
+
+    @Transactional
+    public RequestAuthCodeResponseDTO generateAuthCode(String accessToken) {
+        // Generate auth code logic
+        String authCode = UUID.randomUUID().toString();  // Placeholder for actual auth code generation logic
+
+        // Save auth code with associated access token in the database
+        OpenbankingAuthentication auth = authenticationRepository.findByAccessTokenId(accessToken)
+            .orElseThrow(() -> new RuntimeException("Invalid access token: " + accessToken));
+
+        auth.setAuthCode(authCode);
+        auth.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        authenticationRepository.save(auth);
+
+        return RequestAuthCodeResponseDTO.builder()
+            .authCode(authCode)
+            .accessToken(accessToken)
+            .build();
+    }
 }

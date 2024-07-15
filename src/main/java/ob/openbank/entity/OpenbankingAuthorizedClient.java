@@ -36,4 +36,7 @@ public class OpenbankingAuthorizedClient {
 
   @Column(name = "updated_time", nullable = false)
   private Timestamp updatedTime;
+
+  @Column(name = "client_access_token_id", length = 255)
+  private String clientAccessTokenId;
 }
