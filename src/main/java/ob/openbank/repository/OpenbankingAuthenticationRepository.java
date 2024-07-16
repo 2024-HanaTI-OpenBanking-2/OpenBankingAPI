@@ -10,6 +10,9 @@ public interface OpenbankingAuthenticationRepository extends
     JpaRepository<OpenbankingAuthentication, String> {
     Optional<OpenbankingAuthentication> findByAuthorizationCode(String authorizationCode);
     Optional<OpenbankingAuthentication> findByAccessTokenId(String accessTokenId);
+
+    OpenbankingAuthentication findByAuthCode(String authCode);
+
     @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
     Long countAllCIs();
 }
