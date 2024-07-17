@@ -56,6 +56,7 @@ public class AccountService {
       return new CombinedAccountInfo(bankAccounts, stockAccounts);
     }).get();  // ExecutionException or InterruptedException could be thrown here
 
+    System.out.println("returning");
     return combinedAccountInfo;
   }
 

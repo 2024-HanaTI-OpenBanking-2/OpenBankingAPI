@@ -12,7 +12,7 @@ public interface OpenbankingAuthenticationRepository extends
     Optional<OpenbankingAuthentication> findByAccessTokenId(String accessTokenId);
 
     OpenbankingAuthentication findByAuthCode(String authCode);
-
+    OpenbankingAuthentication findByCi(String ci);
     @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
     Long countAllCIs();
 }
