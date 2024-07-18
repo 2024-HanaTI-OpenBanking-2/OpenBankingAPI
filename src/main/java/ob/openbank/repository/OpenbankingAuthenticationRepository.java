@@ -16,8 +16,11 @@ public interface OpenbankingAuthenticationRepository extends
 
   OpenbankingAuthentication findByAuthCode(String authCode);
 
+  OpenbankingAuthentication findByCi(String ci);
+
   @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
   Long countAllCIs();
+
 
   @Query("SELECT o.ci FROM OpenbankingAuthentication o WHERE o.accessTokenId = :accessTokenId")
   Optional<String> findCiByAccessToken(@Param("accessTokenId") String accessTokenId);

@@ -53,7 +53,7 @@ public class CardService {
 
   public List<CardCustomerApprovalDTO> getCardApprovalList(
       CardApprovalRequestDTO cardApprovalRequestDTO) {
-    String url = cardServerUrl + "/card-approval-list";
+    String url = cardServerUrl + "/api/card-approval-list";
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<CardApprovalRequestDTO> requestEntity = new HttpEntity<>(cardApprovalRequestDTO,
