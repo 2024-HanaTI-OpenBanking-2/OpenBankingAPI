@@ -1,3 +1,4 @@
+// 서버 (오픈 뱅킹)
 package ob.openbank.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -12,8 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**")
-        .allowedOrigins("http://localhost:8080")
-        .allowedMethods("GET", "POST", "PUT", "DELETE");
+        .allowedOrigins("*")
+        .allowedMethods("GET", "POST", "PUT", "DELETE")
+        .allowedHeaders("*");
   }
 
   @Bean
