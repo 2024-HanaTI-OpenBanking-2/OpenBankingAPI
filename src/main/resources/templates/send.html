@@ -78,24 +78,28 @@
 
       // 모달 제어 함수
       function showModal(message) {
-        $("#modalMessage").text(message);
-        $("#myModal").show();
+        Swal.fire({
+          title: '알림',
+          text: message,
+          icon: 'success',
+          confirmButtonText: '확인'
+        });
       }
 
       function showPDFModal(content) {
         $("#modalMessage").html(content);
-        $("#myModal").show();
+        $("#myModal").removeClass('hide').show();
       }
 
       $(".close").click(function () {
-        $("#myModal").hide();
-      });
-      $(window).click(function (event) {
-        if (event.target.id == "myModal") {
-          $("#myModal").hide();
-        }
+        $("#myModal").addClass('hide').hide();
       });
 
+      $(window).click(function (event) {
+        if ($(event.target).is('#myModal')) {
+          $("#myModal").addClass('hide').hide();
+        }
+      });
       // '인증번호 전송' 버튼 클릭 이벤트 핸들러
       $("#sendButton").click(function (event) {
         event.preventDefault();  // 기본 폼 제출 이벤트 중단
@@ -264,7 +268,7 @@
   </div>
 
   <!-- 모달 구조 -->
-  <div id="myModal" class="modal">
+  <div id="myModal" class="modal hide">
     <div class="modal-content">
       <span class="close">&times;</span>
       <p id="modalMessage" class="modal-message"></p>

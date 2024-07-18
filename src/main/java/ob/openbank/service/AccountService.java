@@ -14,6 +14,7 @@ import ob.openbank.dto.*;
 import ob.openbank.entity.OpenbankingAuthentication;
 import ob.openbank.repository.OpenbankingAuthenticationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,6 +29,14 @@ public class AccountService {
   private RestTemplate restTemplate;
 
 
+  @Value("${bank.server.url}")
+  private String bankURL;
+
+  @Value("${stock.server.url}")
+  private String stockURL;
+
+
+
   public CombinedAccountInfo getAccountInfoList(AccountInfoDTO accountInfoDTO)
       throws ExecutionException, InterruptedException {
     OpenbankingAuthentication ciObject = openbankingAuthenticationRepository.findByAuthCode(
@@ -35,8 +44,8 @@ public class AccountService {
     AccountCiResponseDTO accountCiResponseDTO = new AccountCiResponseDTO(ciObject.getCi());
     System.out.println("Sending request with CI: " + accountCiResponseDTO.getCi());
 
-    String bankUrl = "http://localhost:8083/accountinfo/list";
-    String stockUrl = "http://localhost:8084/accountinfo/list";
+    String bankUrl = bankURL + "/accountinfo/list";
+    String stockUrl = stockURL + "/accountinfo/list";
 
     // 비동기적으로 각 서버에 POST 요청
     CompletableFuture<List<AccountInfoResponseDTO>> bankFuture = CompletableFuture.supplyAsync(

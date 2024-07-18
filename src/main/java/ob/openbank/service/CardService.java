@@ -34,7 +34,7 @@ public class CardService {
         .orElseThrow(() -> new RuntimeException("Invalid access token: " + accessToken));
     CiDTO ciDTO = new CiDTO(ci);
     System.out.println(ciDTO);
-    String cardUrl = "http://localhost:8082/api/card-list-ci";
+    String cardUrl = cardServerUrl + "/api/card-list-ci";
 
     // REST 템플릿을 사용하여 다른 서비스로 CI를 기반으로 하는 요청을 보냅니다.
     try {
@@ -74,14 +74,14 @@ public class CardService {
   }
 
   public List<AccountInfoResponseDTO> getAccountList(CiDTO ciDTO) {
-    String bankUrl = "http://localhost:8083/accountinfo/list";
+    String bankUrl = bankServerUrl + "/accountinfo/list";
     AccountInfoResponseDTO[] result = (restTemplate.postForObject(bankUrl, ciDTO,
         AccountInfoResponseDTO[].class));
     return Arrays.asList(result);
   }
 
   public PayMoneyChargeResponseDTO getPayMoneyCharge(PayMoneyChargeRequestDTO requestDTO) {
-    String bankUrl = bankServerUrl + "/card/paymoney-charge";
+    String bankUrl = bankServerUrl + "/api/card/paymoney-charge";
     return restTemplate.postForObject(bankUrl, requestDTO, PayMoneyChargeResponseDTO.class);
   }
 }
