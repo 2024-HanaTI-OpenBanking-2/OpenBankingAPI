@@ -24,6 +24,10 @@ public class CardService {
     @Value("${card.server.url}")
     private String cardServerUrl;
 
+    @Value("${bank.server.url}")
+    private String bankServerUrl;
+
+
     public List<CustomerCardInfoDTO> getCustomerCardInfo(String accessToken) {
         String ci = authenticationRepository.findCiByAccessToken(accessToken)
                 .orElseThrow(() -> new RuntimeException("Invalid access token: " + accessToken));
@@ -63,4 +67,16 @@ public class CardService {
             throw new RuntimeException("Failed to get approval list: " + response.getStatusCode());
         }
     }
+
+    public List<AccountInfoResponseDTO> getAccountList(CiDTO ciDTO) {
+        String bankUrl = "http://localhost:8083/accountinfo/list";
+        AccountInfoResponseDTO[] result = (restTemplate.postForObject(bankUrl, ciDTO, AccountInfoResponseDTO[].class));
+        return Arrays.asList(result);
+    }
+
+    public PayMoneyChargeResponseDTO getPayMoneyCharge(PayMoneyChargeRequestDTO requestDTO) {
+        String bankUrl = bankServerUrl + "/card/paymoney-charge";
+        return restTemplate.postForObject(bankUrl, requestDTO, PayMoneyChargeResponseDTO.class);
+    }
 }
+

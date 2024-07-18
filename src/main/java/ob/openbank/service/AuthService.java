@@ -213,6 +213,7 @@ public class AuthService {
         auth.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
         authenticationRepository.save(auth);
 
+
         return RequestAuthCodeResponseDTO.builder()
             .authCode(authCode)
             .accessToken(accessToken)

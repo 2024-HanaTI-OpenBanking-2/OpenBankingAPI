@@ -1,14 +1,12 @@
 package ob.openbank.controller;
 
-import ob.openbank.dto.AccessTokenDTO;
-import ob.openbank.dto.CardApprovalRequestDTO;
-import ob.openbank.dto.CardCustomerApprovalDTO;
-import ob.openbank.dto.CustomerCardInfoDTO;
+import ob.openbank.dto.*;
 import ob.openbank.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,15 +33,26 @@ public class CardController {
     }
 
     @PostMapping("/card-approval")
-    public ResponseEntity<List<CardCustomerApprovalDTO>> getCardApprovalList(@RequestBody CardApprovalRequestDTO cardApprovalRequestDTO){
-        try{
+    public ResponseEntity<List<CardCustomerApprovalDTO>> getCardApprovalList(@RequestBody CardApprovalRequestDTO cardApprovalRequestDTO) {
+        try {
             List<CardCustomerApprovalDTO> result = cardService.getCardApprovalList(cardApprovalRequestDTO);
             return ResponseEntity.ok(result);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+    }
+
+    @PostMapping("/account-list")
+    public ResponseEntity<List<AccountInfoResponseDTO>> getAccountList(@RequestBody CiDTO ciDTO) {
+        List<AccountInfoResponseDTO> result = cardService.getAccountList(ciDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PostMapping("/paymoney-charge")
+    private ResponseEntity<PayMoneyChargeResponseDTO> getPayMoneyCharge(@RequestBody PayMoneyChargeRequestDTO requestDTO) {
+        PayMoneyChargeResponseDTO responseDTO = cardService.getPayMoneyCharge(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 
