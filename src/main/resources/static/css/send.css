@@ -1,0 +1,242 @@
+@font-face {
+  font-family: 'CustomFont'; /* 폰트에 대한 사용자 정의 이름 */
+  src: url('/fonts/env2.ttf') format('truetype'); /* 폰트 파일의 경로와 형식 */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  font-family: 'CustomFont', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  min-height: 80vh;
+  background-color: #f4f4f4;
+}
+
+/* 폼 그룹 스타일링 */
+.form-group {
+  margin-top: 5px; /* 간격 조정 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 요소들 사이에 공간을 균일하게 배분 */
+  width: 100%;
+  max-width: 800px; /* 폼 최대 너비 설정 */
+  margin-bottom: 5px; /* 간격 조정 */
+}
+
+.form-group label {
+  flex-shrink: 0; /* label 크기 고정 */
+  width: 130px; /* label 폭 설정 */
+  text-align: left; /* label 텍스트 왼쪽 정렬 */
+  margin-left: 40px;
+}
+
+.form-group input,
+.form-group button {
+  flex-grow: 1; /* input 및 button이 남은 공간을 채움 */
+  margin-left: 10px; /* label과 요소 사이 간격 */
+  padding: 10px; /* 입력 필드 패딩 조정 */
+  margin-right: 10px;
+  border-radius: 5px; /* 둥근 모서리 */
+  cursor: pointer; /* 포인터 커서 */
+  border: none;
+}
+
+.form-group button {
+  transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+  background-color: rgb(185 221 247);
+}
+
+/* 버튼 비활성화 스타일 */
+.disabled {
+  text-align: center;
+  justify-content: space-between;
+  background-color: lightgray !important;
+  color: white;
+  pointer-events: none;
+}
+
+/* 호버 시 색상 */
+.form-group button:hover {
+  background-color: #007aff; /* 호버 시 배경색 */
+}
+
+.name-input {
+  width: 50%; /* 혹은 적절한 비율로 조정 */
+}
+
+
+/* 버튼 그룹 스타일링 */
+.button-group {
+  display: flex;
+  justify-content: center; /* 버튼 그룹을 중앙에 위치 */
+  width: 100%;
+  max-width: 800px; /* 버튼 그룹 최대 너비 설정 */
+  margin-top: 20px; /* 폼 그룹과의 간격 */
+}
+
+
+.input-group {
+  display: flex;
+  justify-items: center;
+  width: 100%; /* input-group 너비를 부모 요소에 맞춤 */
+  align-items: center;
+}
+
+.input-group label {
+  display: flex;
+  width: 100%; /* input-group 너비를 부모 요소에 맞춤 */
+}
+
+.input-group input {
+  flex: 1; /* 두 입력 필드가 공간을 균등하게 차지하도록 설정 */
+  margin-left: 10px; /* 첫 번째 입력 필드 오른쪽에 간격 추가 */
+}
+
+/*사용자 동의 (체크박스)*/
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  /*justify-content: flex-start;*/
+  padding: 5px;
+  margin: 10px 10px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background-color: #fff;
+  width: 100%;
+}
+
+.checkbox-group.full-width {
+  width: 95%; /* 전체 동의 체크박스는 전체 폭 사용 */
+  justify-content: flex-start; /* 체크박스와 라벨이 왼쪽 정렬 */
+  margin: 0px 40px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px; /* 체크박스와 라벨 사이 간격 */
+  width: 20px; /* 체크박스 크기 */
+  height: 20px; /* 체크박스 크기 */
+  flex-shrink: 0; /* 체크박스 크기가 변하지 않도록 설정 */
+
+}
+
+.checkbox-group label {
+  flex-grow: 1;
+  margin-left: 10px; /* 체크박스와 라벨 사이 간격 */
+  cursor: pointer;
+}
+
+/* '필수 모두 동의' 체크박스 그룹 */
+.checkbox-group.select-all-group {
+  width: 30%; /* 공간 조정 */
+  justify-content: flex-start; /* 내용을 왼쪽으로 정렬 */
+}
+
+/* 개인정보 동의 및 연계정보 체크박스 그룹 */
+.checkbox-group.consent-group {
+  width: 25%; /* 공간 조정 */
+  justify-content: flex-start; /* 내용을 왼쪽으로 정렬 */
+}
+
+.select-all {
+  margin-right: 10px; /* 체크박스와 라벨 사이 간격 */
+  width: 20px; /* 체크박스 크기 */
+  height: 20px; /* 체크박스 크기 */
+}
+
+/* 화살표 아이콘 (라벨의 오른쪽에 위치) */
+.label-arrow {
+  display: inline-block;
+  margin-left: auto; /* 화살표를 오른쪽으로 밀어냄 */
+}
+
+.consent-label {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/*추가(07-18)*/
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
+
+/*로고*/
+.logo {
+  text-align: left;
+}
+
+.logo img {
+  height: 60px;
+  margin-left: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.additional-consents {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.check-sort {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+/* 모달 스타일 */
+
+.modal {
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  height: 600px;
+}
+
+.close {
+  align-self: flex-end; /* close 버튼을 우측 상단에 배치 */
+  font-size: 28px; /* 크기 조정 */
+  cursor: pointer;
+  margin-bottom: 5px; /* close 버튼과 modal-message 사이의 간격 */
+}
+
+.close:hover {
+  color: blue;
+}
+
+.modal-message {
+  width: 90%;
+  flex-grow: 1;
+}
+.hide{
+  display: none;
+}

@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class OpenbankApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(OpenbankApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(OpenbankApplication.class, args);
+  }
 
 }
