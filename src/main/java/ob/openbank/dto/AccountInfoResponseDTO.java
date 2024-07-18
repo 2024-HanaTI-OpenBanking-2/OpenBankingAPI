@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AccountInfoResponseDTO {
+
   private String accountNum;
   private String customerId;
   private String accountName;

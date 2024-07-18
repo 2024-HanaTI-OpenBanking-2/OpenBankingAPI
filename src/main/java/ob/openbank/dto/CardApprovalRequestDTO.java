@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardApprovalRequestDTO {
-    private String customerCardId;
-    private String accessTokenId;
+
+  private String customerCardId;
+  private String accessTokenId;
 }

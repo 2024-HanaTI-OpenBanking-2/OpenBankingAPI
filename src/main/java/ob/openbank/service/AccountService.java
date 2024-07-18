@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class AccountService {
+
   @Autowired
   private OpenbankingAuthenticationRepository openbankingAuthenticationRepository;
 
@@ -27,8 +28,10 @@ public class AccountService {
   private RestTemplate restTemplate;
 
 
-  public CombinedAccountInfo getAccountInfoList(AccountInfoDTO accountInfoDTO) throws ExecutionException, InterruptedException {
-    OpenbankingAuthentication ciObject = openbankingAuthenticationRepository.findByAuthCode(accountInfoDTO.getAuth_code());
+  public CombinedAccountInfo getAccountInfoList(AccountInfoDTO accountInfoDTO)
+      throws ExecutionException, InterruptedException {
+    OpenbankingAuthentication ciObject = openbankingAuthenticationRepository.findByAuthCode(
+        accountInfoDTO.getAuth_code());
     AccountCiResponseDTO accountCiResponseDTO = new AccountCiResponseDTO(ciObject.getCi());
     System.out.println("Sending request with CI: " + accountCiResponseDTO.getCi());
 
@@ -36,15 +39,19 @@ public class AccountService {
     String stockUrl = "http://localhost:8084/accountinfo/list";
 
     // 비동기적으로 각 서버에 POST 요청
-    CompletableFuture<List<AccountInfoResponseDTO>> bankFuture = CompletableFuture.supplyAsync(() -> {
-      AccountInfoResponseDTO[] bankResult = restTemplate.postForObject(bankUrl, accountCiResponseDTO, AccountInfoResponseDTO[].class);
-      return Arrays.asList(bankResult);  // 배열을 리스트로 변환
-    });
+    CompletableFuture<List<AccountInfoResponseDTO>> bankFuture = CompletableFuture.supplyAsync(
+        () -> {
+          AccountInfoResponseDTO[] bankResult = restTemplate.postForObject(bankUrl,
+              accountCiResponseDTO, AccountInfoResponseDTO[].class);
+          return Arrays.asList(bankResult);  // 배열을 리스트로 변환
+        });
 
-    CompletableFuture<List<SecuritiesAccountInfoDto>> stockFuture = CompletableFuture.supplyAsync(() -> {
-      SecuritiesAccountInfoDto[] stockResult = restTemplate.postForObject(stockUrl, accountCiResponseDTO, SecuritiesAccountInfoDto[].class);
-      return Arrays.asList(stockResult);  // 배열을 리스트로 변환
-    });
+    CompletableFuture<List<SecuritiesAccountInfoDto>> stockFuture = CompletableFuture.supplyAsync(
+        () -> {
+          SecuritiesAccountInfoDto[] stockResult = restTemplate.postForObject(stockUrl,
+              accountCiResponseDTO, SecuritiesAccountInfoDto[].class);
+          return Arrays.asList(stockResult);  // 배열을 리스트로 변환
+        });
 
     // 모든 비동기 요청의 결과를 기다림
     CompletableFuture<Void> allFutures = CompletableFuture.allOf(bankFuture, stockFuture);
@@ -58,7 +65,6 @@ public class AccountService {
 
     return combinedAccountInfo;
   }
-
 
 
 }

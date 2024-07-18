@@ -32,7 +32,7 @@ public class OpenbankingAuthentication {
   @Column(name = "scope", length = 255)
   private String scope;
 
-//  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_no_generator")
+  //  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_no_generator")
 //  @SequenceGenerator(name = "seq_no_generator", sequenceName = "seq_no_seq", allocationSize = 1)
   @Column(name = "seq_no")
   private Long seqNo;

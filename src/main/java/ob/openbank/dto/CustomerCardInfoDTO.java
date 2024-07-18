@@ -10,14 +10,15 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerCardInfoDTO {
-    private String customerCardId;
-    private String cardProductId;
-    private String customerId;
-    private Date expirationDate;
-    private Double lastMonthPerformance;
-    private String customerPerformanceSegment;
-    private String cardTypeCode;
-    private String cardStatusCode;
-    private byte[] cardImageUrl;
-    private String cardName;
+
+  private String customerCardId;
+  private String cardProductId;
+  private String customerId;
+  private Date expirationDate;
+  private Double lastMonthPerformance;
+  private String customerPerformanceSegment;
+  private String cardTypeCode;
+  private String cardStatusCode;
+  private byte[] cardImageUrl;
+  private String cardName;
 }

@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CiDTO {
-    private String ci;
+
+  private String ci;
 }

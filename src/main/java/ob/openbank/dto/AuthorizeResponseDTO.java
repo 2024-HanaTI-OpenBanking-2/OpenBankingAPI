@@ -11,6 +11,5 @@ import lombok.Setter;
 public class AuthorizeResponseDTO {
 
   private String code;
-  //  private String state;
   private String scope;
 }

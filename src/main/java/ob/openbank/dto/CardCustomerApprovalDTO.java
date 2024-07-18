@@ -10,12 +10,13 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardCustomerApprovalDTO {
-    private String approvalNumber;
-    private Instant approvalDate;
-    private Double approvalAmount;
-    private String merchantId;
-    private Double benefitAmount;
-    private String approvalStatusCode;
-    private String paymentCategory;
-    private String customerCardId;
+
+  private String approvalNumber;
+  private Instant approvalDate;
+  private Double approvalAmount;
+  private String merchantId;
+  private Double benefitAmount;
+  private String approvalStatusCode;
+  private String paymentCategory;
+  private String customerCardId;
 }

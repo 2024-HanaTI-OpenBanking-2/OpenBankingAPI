@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CombinedAccountInfo {
 
-    private List<AccountInfoResponseDTO> bankAccounts;
-    private List<SecuritiesAccountInfoDto> stockAccounts;
+  private List<AccountInfoResponseDTO> bankAccounts;
+  private List<SecuritiesAccountInfoDto> stockAccounts;
 }

@@ -9,14 +9,16 @@ import java.util.Optional;
 
 public interface OpenbankingAuthenticationRepository extends
     JpaRepository<OpenbankingAuthentication, String> {
-    Optional<OpenbankingAuthentication> findByAuthorizationCode(String authorizationCode);
-    Optional<OpenbankingAuthentication> findByAccessTokenId(String accessTokenId);
 
-    OpenbankingAuthentication findByAuthCode(String authCode);
+  Optional<OpenbankingAuthentication> findByAuthorizationCode(String authorizationCode);
 
-    @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
-    Long countAllCIs();
+  Optional<OpenbankingAuthentication> findByAccessTokenId(String accessTokenId);
 
-    @Query("SELECT o.ci FROM OpenbankingAuthentication o WHERE o.accessTokenId = :accessTokenId")
-    Optional<String> findCiByAccessToken(@Param("accessTokenId") String accessTokenId);
+  OpenbankingAuthentication findByAuthCode(String authCode);
+
+  @Query("SELECT COUNT(o) FROM OpenbankingAuthentication o")
+  Long countAllCIs();
+
+  @Query("SELECT o.ci FROM OpenbankingAuthentication o WHERE o.accessTokenId = :accessTokenId")
+  Optional<String> findCiByAccessToken(@Param("accessTokenId") String accessTokenId);
 }

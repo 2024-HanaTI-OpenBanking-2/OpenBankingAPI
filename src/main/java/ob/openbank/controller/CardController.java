@@ -18,42 +18,46 @@ import java.util.List;
 @RequestMapping("/api/card")
 public class CardController {
 
-    @Autowired
-    private CardService cardService;
+  @Autowired
+  private CardService cardService;
 
-    @PostMapping("/card-list")
-    public ResponseEntity<List<CustomerCardInfoDTO>> getCardList(@RequestBody AccessTokenDTO accessToken) {
-        try {
-            List<CustomerCardInfoDTO> customerCardInfoDTOList = cardService.getCustomerCardInfo(accessToken.getAccess_token());
-            return ResponseEntity.ok(customerCardInfoDTOList);
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // 상태 코드와 메시지를 적절히 반환
-        }
+  @PostMapping("/card-list")
+  public ResponseEntity<List<CustomerCardInfoDTO>> getCardList(
+      @RequestBody AccessTokenDTO accessToken) {
+    try {
+      List<CustomerCardInfoDTO> customerCardInfoDTOList = cardService.getCustomerCardInfo(
+          accessToken.getAccess_token());
+      return ResponseEntity.ok(customerCardInfoDTOList);
+    } catch (RuntimeException e) {
+      System.out.println(e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // 상태 코드와 메시지를 적절히 반환
     }
+  }
 
-    @PostMapping("/card-approval")
-    public ResponseEntity<List<CardCustomerApprovalDTO>> getCardApprovalList(@RequestBody CardApprovalRequestDTO cardApprovalRequestDTO) {
-        try {
-            List<CardCustomerApprovalDTO> result = cardService.getCardApprovalList(cardApprovalRequestDTO);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+  @PostMapping("/card-approval")
+  public ResponseEntity<List<CardCustomerApprovalDTO>> getCardApprovalList(
+      @RequestBody CardApprovalRequestDTO cardApprovalRequestDTO) {
+    try {
+      List<CardCustomerApprovalDTO> result = cardService.getCardApprovalList(
+          cardApprovalRequestDTO);
+      return ResponseEntity.ok(result);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
+  }
 
-    @PostMapping("/account-list")
-    public ResponseEntity<List<AccountInfoResponseDTO>> getAccountList(@RequestBody CiDTO ciDTO) {
-        List<AccountInfoResponseDTO> result = cardService.getAccountList(ciDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
+  @PostMapping("/account-list")
+  public ResponseEntity<List<AccountInfoResponseDTO>> getAccountList(@RequestBody CiDTO ciDTO) {
+    List<AccountInfoResponseDTO> result = cardService.getAccountList(ciDTO);
+    return ResponseEntity.status(HttpStatus.OK).body(result);
+  }
 
-    @PostMapping("/paymoney-charge")
-    private ResponseEntity<PayMoneyChargeResponseDTO> getPayMoneyCharge(@RequestBody PayMoneyChargeRequestDTO requestDTO) {
-        PayMoneyChargeResponseDTO responseDTO = cardService.getPayMoneyCharge(requestDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
-    }
-
+  @PostMapping("/paymoney-charge")
+  private ResponseEntity<PayMoneyChargeResponseDTO> getPayMoneyCharge(
+      @RequestBody PayMoneyChargeRequestDTO requestDTO) {
+    PayMoneyChargeResponseDTO responseDTO = cardService.getPayMoneyCharge(requestDTO);
+    return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+  }
 
 }

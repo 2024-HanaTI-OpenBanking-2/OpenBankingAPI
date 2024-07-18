@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor  // 기본 생성자 추가
 public class AccountCiResponseDTO {
+
   private String ci;
 }

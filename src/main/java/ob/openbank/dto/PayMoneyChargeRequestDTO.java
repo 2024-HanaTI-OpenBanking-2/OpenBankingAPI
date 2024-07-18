@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PayMoneyChargeRequestDTO {
-    private String accountId;
-    private double amount;
+
+  private String accountId;
+  private double amount;
 }
